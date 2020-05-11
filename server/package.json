@@ -8,10 +8,20 @@
         "start": "ts-node ./src"
     },
     "keywords": [],
-    "author": "",
+    "author": "MyAeroCode",
     "license": "ISC",
     "devDependencies": {
+        "@types/node": "^13.13.5",
         "ts-node": "^8.10.1",
         "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "@types/form-data": "^2.5.0",
+        "@types/qs": "^6.9.2",
+        "axios": "^0.19.2",
+        "form-data": "^3.0.0",
+        "node-html-parser": "^1.2.16",
+        "qs": "^6.9.4",
+        "tistory-js": "^1.14.7"
     }
 }
