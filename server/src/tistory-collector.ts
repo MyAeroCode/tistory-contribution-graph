@@ -273,7 +273,7 @@ export class TistoryCollector {
 
             //
             // 잠깐 대기한다.
-            await new Promise((resolve) => setTimeout(resolve, 333));
+            await new Promise((resolve) => setTimeout(resolve, 100));
         }
         console.log("데이터 갱신 완료");
 
