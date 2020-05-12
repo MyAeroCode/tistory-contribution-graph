@@ -49,6 +49,16 @@ export class TistoryCollector {
     }
 
     /**
+     * 1년전 날짜를 "YYYY-MM-DD" 형태로 가져온다.
+     */
+    private getDateOneYearBefore(): string {
+        const date = new Date();
+        date.setDate(date.getDate() - 366);
+        const oneYearBefore = date.toISOString().substr(0, 10);
+        return oneYearBefore;
+    }
+
+    /**
      * 포스팅 이력을 게시글에 저장합니다.
      */
     private async save(arg: SaveInput): Promise<void> {
@@ -114,6 +124,10 @@ export class TistoryCollector {
         }
 
         //
+        // 1년전 날짜
+        const beforeOneYear = this.getDateOneYearBefore();
+
+        //
         // 문자열 형태로 직렬화된 이력
         const asText = dataElem.rawText;
 
@@ -159,9 +173,12 @@ export class TistoryCollector {
 
             //
             // 해당 날짜의 카운트를 올린다.
-            const key = String(smallPart[0]);
+            // 단, 현재 기준으로 1년이 넘어서 표시되지 않는 데이터는 무시한다.
+            const date = String(smallPart[0]);
             const cnt = Number(smallPart[1]);
-            postLog.set(key, cnt);
+            if (beforeOneYear <= date) {
+                postLog.set(date, cnt);
+            }
         });
         console.log("데이터 로딩 완료");
         return postLog;
@@ -250,13 +267,16 @@ export class TistoryCollector {
             storageBlogName: arg.storageBlogName || arg.targetBlogName,
             storagePostId: arg.storagePostId,
         });
-        const lastDate = this.getLastDateOfPostLog(postLog);
-        postLog.delete(lastDate);
+        const lastLoggedDate = this.getLastDateOfPostLog(postLog);
+        postLog.delete(lastLoggedDate);
 
         /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             최근 페이지부터 순회하며,
-            기존이력에 저장된 마지막 날짜보다 작아질 때까지 카운팅을 수행한다.
+            기존이력에 저장된 마지막 날짜보다 작아지거나,
+            1년 이전에 작성된 게시글을 발견할때 까지 카운팅을 수행한다.
         ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+        const beforeOneYear = this.getDateOneYearBefore();
+
         let keepLoop: boolean = true;
         for (let page = 1; keepLoop; page++) {
             /**
@@ -276,13 +296,15 @@ export class TistoryCollector {
 
             //
             // 작성날짜마다 카운트를 증가시킨다.
-            // 단, 기존이력의 마지막 날짜보다 작아진다면 중단한다.
+            // 단, 기존이력의 마지막 날짜보다 작아지거나,
+            // 그래프에 표시되지 않는 1년 이전의 포스트를 발견했다면 중단한다.
             for (const post of posts) {
                 /**
                  * "YYYY-MM-DD" 형태의 날짜 문자열
                  */
                 const date = post.date.substr(0, 10);
-                if (date < lastDate) {
+                if (date < lastLoggedDate || date < beforeOneYear) {
+                    console.log("stop at", date);
                     keepLoop = false;
                     break;
                 }
