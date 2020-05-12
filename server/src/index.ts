@@ -123,7 +123,5 @@ yargs
         //
         // API를 호출한다.
         await clear(argv, await createConfig(argv));
-
-        console.log("완료되었습니다.");
     })
     .demandCommand().argv;
