@@ -1,8 +1,8 @@
 {
-    "name": "server",
-    "version": "1.0.0",
+    "name": "tistory-contribution-collector",
+    "version": "1.1.0",
     "description": "",
-    "main": "index.js",
+    "main": "./src/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "ts-node ./src"
@@ -12,6 +12,7 @@
     "license": "ISC",
     "devDependencies": {
         "@types/node": "^13.13.5",
+        "@types/yargs": "^15.0.4",
         "serverless": "^1.70.1",
         "serverless-offline": "^6.1.5",
         "serverless-plugin-typescript": "^1.1.9",
@@ -21,12 +22,15 @@
     "dependencies": {
         "@types/aws-lambda": "^8.10.51",
         "@types/form-data": "^2.5.0",
+        "@types/prompts": "^2.0.8",
         "@types/qs": "^6.9.2",
         "aws-lambda": "^1.0.6",
         "axios": "^0.19.2",
         "form-data": "^3.0.0",
         "node-html-parser": "^1.2.16",
+        "prompts": "^2.3.2",
         "qs": "^6.9.4",
-        "tistory-js": "^1.14.7"
+        "tistory-js": "^1.14.9",
+        "yargs": "^15.3.1"
     }
 }
