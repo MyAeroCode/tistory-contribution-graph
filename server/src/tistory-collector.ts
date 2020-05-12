@@ -74,7 +74,7 @@ export class TistoryCollector {
                 const count = log[1];
                 return `${date}:${count}`;
             })
-            .sort((a, b) => Number(a < b))
+            .sort()
             .join(" ");
 
         //
