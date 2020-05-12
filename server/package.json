@@ -30,7 +30,7 @@
         "node-html-parser": "^1.2.16",
         "prompts": "^2.3.2",
         "qs": "^6.9.4",
-        "tistory-js": "^1.14.9",
+        "tistory-js": "^1.14.10",
         "yargs": "^15.3.1"
     }
 }
