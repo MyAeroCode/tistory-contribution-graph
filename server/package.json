@@ -11,6 +11,7 @@
     "author": "MyAeroCode",
     "license": "ISC",
     "devDependencies": {
+        "@types/moment-timezone": "^0.5.13",
         "@types/node": "^13.13.5",
         "@types/yargs": "^15.0.4",
         "serverless": "^1.70.1",
@@ -27,6 +28,7 @@
         "aws-lambda": "^1.0.6",
         "axios": "^0.19.2",
         "form-data": "^3.0.0",
+        "moment-timezone": "^0.5.28",
         "node-html-parser": "^1.2.16",
         "prompts": "^2.3.2",
         "qs": "^6.9.4",
