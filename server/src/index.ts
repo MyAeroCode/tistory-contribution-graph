@@ -4,6 +4,9 @@ import prompts from "prompts";
 import { collect, clear } from "./api";
 import { TistoryCollectorConfig } from "./tistory-collector";
 
+/**
+ * createConfig 함수의 입력형식
+ */
 interface CreateConfigArgs {
     client?: string;
     secret?: string;
@@ -11,6 +14,9 @@ interface CreateConfigArgs {
     pw?: string;
 }
 
+/**
+ * 사용자에게서 받은 값으로 TistoryCollectorConfig를 생성한다.
+ */
 async function createConfig(
     argv: CreateConfigArgs
 ): Promise<TistoryCollectorConfig> {
