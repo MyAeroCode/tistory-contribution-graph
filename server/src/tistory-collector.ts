@@ -200,6 +200,7 @@ export class TistoryCollector {
             await this.load(arg);
             console.log("스토리지 검증 완료");
         } catch (e) {
+            console.log("what", e.message);
             const res = await prompts({
                 type: "confirm",
                 name: "ok",
