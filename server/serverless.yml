@@ -1,0 +1,28 @@
+service: tistory-contribution-collector
+
+provider:
+    runtime: nodejs12.x
+    name: aws
+    stage: dev
+    region: ap-northeast-2
+
+functions:
+    collect:
+        handler: src/handler.handle_collect
+        events:
+            - http:
+                  path: /collect
+                  method: post
+                  cors: false
+
+    clear:
+        handler: src/handler.handle_clear
+        events:
+            - http:
+                  path: /clear
+                  method: post
+                  cors: false
+
+plugins:
+    - serverless-plugin-typescript
+    - serverless-offline
