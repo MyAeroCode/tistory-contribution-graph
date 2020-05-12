@@ -76,6 +76,7 @@ export class TistoryCollector {
             title: `게시글 이력 (Updated At ${new Date().toLocaleString()})`,
             content: `<div id="${this.logDivId}">${serializedLog}</div>`,
         });
+        console.log("데이터 저장 완료");
     }
 
     /**
@@ -161,7 +162,7 @@ export class TistoryCollector {
             const cnt = Number(smallPart[1]);
             postLog.set(key, cnt);
         });
-
+        console.log("데이터 로딩 완료");
         return postLog;
     }
 
@@ -183,6 +184,7 @@ export class TistoryCollector {
             title: `게시글 이력 (Updated At ${new Date().toLocaleString()})`,
             content: "",
         });
+        console.log("데이터 초기화 완료");
     }
 
     /**
@@ -194,13 +196,16 @@ export class TistoryCollector {
         // 빈 이력이 주어졌을 때.
         if (log.size === 0) {
             return "0000-00-00";
+        } else {
+            const lastDate = Array.from(log.keys()).reduce(function comparator(
+                prev,
+                curr
+            ) {
+                return prev < curr ? curr : prev;
+            });
+            console.log("마지막 이력 날짜", lastDate);
+            return lastDate;
         }
-
-        //
-        // 1개 이상의 이력이 주어졌을 때.
-        return Array.from(log.keys()).reduce(function comparator(prev, curr) {
-            return prev < curr ? curr : prev;
-        });
     }
 
     /**
@@ -227,7 +232,6 @@ export class TistoryCollector {
         });
         const lastDate = this.getLastDateOfPostLog(postLog);
         postLog.delete(lastDate);
-        console.log("마지막 이력날짜 :", lastDate);
 
         /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             최근 페이지부터 순회하며,
@@ -285,7 +289,6 @@ export class TistoryCollector {
             storagePostId: arg.storagePostId,
             postLog,
         });
-        console.log("데이터 저장 완료");
 
         return postLog;
     }
