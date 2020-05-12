@@ -7,7 +7,11 @@ import {
     ClearInput,
 } from "./tistory-collector-types";
 import { parse, HTMLElement } from "node-html-parser";
-import prompts from "prompts";
+
+//
+// 서울 타임존을 사용한다.
+import moment from "moment-timezone";
+moment.tz.setDefault("Asia/Seoul");
 
 /**
  * 티스토리 날짜 수집기가 TistoryAPI를 사용할 수 있게 도와주는 설정값.
@@ -52,10 +56,10 @@ export class TistoryCollector {
      * 1년전 날짜를 "YYYY-MM-DD" 형태로 가져온다.
      */
     private getDateOneYearBefore(): string {
-        const date = new Date();
-        date.setDate(date.getDate() - 366);
-        const oneYearBefore = date.toISOString().substr(0, 10);
-        return oneYearBefore;
+        return moment()
+            .subtract(1, "year")
+            .subtract(1, "day")
+            .format("YYYY-MM-DD");
     }
 
     /**
@@ -84,7 +88,9 @@ export class TistoryCollector {
             access_token,
             blogName: arg.storageBlogName,
             postId: arg.storagePostId,
-            title: `게시글 이력 (Updated At ${new Date().toLocaleString()})`,
+            title: `게시글 이력 (Updated at ${moment().format(
+                "YYYY-MM-DD HH:mm:ss"
+            )})`,
             content: `<div id="${this.logDivId}">${serializedLog}</div>`,
         });
         console.log("데이터 저장 완료");
@@ -211,7 +217,9 @@ export class TistoryCollector {
             access_token,
             blogName: arg.storageBlogName,
             postId: arg.storagePostId,
-            title: `게시글 이력 (Updated At ${new Date().toLocaleString()})`,
+            title: `게시글 이력 (Updated At ${moment().format(
+                "YYYY-MM-DD HH:mm:ss"
+            )})`,
             content: "",
         });
         console.log("데이터 초기화 완료");
