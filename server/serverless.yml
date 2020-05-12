@@ -26,5 +26,6 @@ functions:
                   cors: false
 
 plugins:
+    - serverless-dotenv-plugin
     - serverless-plugin-typescript
     - serverless-offline
