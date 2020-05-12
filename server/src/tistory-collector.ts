@@ -7,6 +7,7 @@ import {
     ClearInput,
 } from "./tistory-collector-types";
 import { parse, HTMLElement } from "node-html-parser";
+import prompts from "prompts";
 
 /**
  * 티스토리 날짜 수집기가 TistoryAPI를 사용할 수 있게 도와주는 설정값.
@@ -174,6 +175,25 @@ export class TistoryCollector {
         // 액세스 토큰을 취득한다.
         const code = await this.api.getCodeViaAccountInfo(this.account);
         const access_token = await this.api.getAccessTokenViaCode(code);
+
+        //
+        // 정말 스토리지 게시글인지 체크한다.
+        try {
+            console.log("정말 스토리지 데이터인지 확인합니다.");
+            await this.load(arg);
+            console.log("스토리지 검증 완료");
+        } catch (e) {
+            const res = await prompts({
+                type: "confirm",
+                name: "ok",
+                message:
+                    "스토리지 게시글이 아닌 것 같습니다. 정말 초기화하겠습니까?",
+            });
+            if (!res.ok) {
+                console.log("중단되었습니다.");
+                return;
+            }
+        }
 
         //
         // 내용을 빈 문자열로 덮어쓴다.
