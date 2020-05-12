@@ -5,6 +5,8 @@ provider:
     name: aws
     stage: dev
     region: ap-northeast-2
+    memorySize: 128
+    timeout: 10
 
 functions:
     collect:
