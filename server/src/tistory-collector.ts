@@ -88,7 +88,7 @@ export class TistoryCollector {
             access_token,
             blogName: arg.storageBlogName,
             postId: arg.storagePostId,
-            title: `게시글 이력 (Updated at ${moment().format(
+            title: `post-metadata (updated at ${moment().format(
                 "YYYY-MM-DD HH:mm:ss"
             )})`,
             content: `<div id="${this.logDivId}">${serializedLog}</div>`,
