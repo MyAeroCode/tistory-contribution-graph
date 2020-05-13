@@ -12,12 +12,17 @@
  *
  * @param  graphId {string} #을 포함한 그래프 요소 식별자
  * @param  storagePostId {number} 스토리지 게시글의 숫자 형태 식별자 ex) ~.tistory.com/xxx
+ * @param  viewHeader {boolean} "~ [post|posts] in last year" 메세지를 표시합니다. (기본값 true)
  *
  * @warnning
  *         CORS 제약에 따라 다른 블로그의 스토리지 게시글을 얻어올 수 없습니다.
  *         적용하고자 하는 블로그의 포스트 식별자를 사용해주세요.
  */
-async function loadTistoryContributionGraph(graphId, storagePostId) {
+async function loadTistoryContributionGraph(
+    graphId,
+    storagePostId,
+    viewHeader = true
+) {
     let github_graph_data;
 
     try {
@@ -92,6 +97,7 @@ async function loadTistoryContributionGraph(graphId, storagePostId) {
                 "11",
                 "12",
             ],
+            viewHeader,
         });
     }
 }

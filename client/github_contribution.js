@@ -159,15 +159,21 @@ if (!String.prototype.formatString) {
             }
 
             //Fixed size for now with width= 721 and height = 110
-            const cx = 0;
             var wire_html = `
-                <div id="graph-header">
-                    ${numberWithCommas(
-                        cx
-                        // settings.data.length
-                    )} 
-                    ${cx <= 1 ? "post" : "posts"} in the last year
-                </div>
+                ${
+                    settings.viewHeader
+                        ? `
+                            <div id="graph-header">
+                                ${numberWithCommas(settings.data.length)} 
+                                ${
+                                    settings.data.length <= 1 ? "post" : "posts"
+                                } in the last year
+                            </div>
+                          `
+                        : `
+                          `
+                }
+                
                 <div id="graph-border">
                     
                     <div id="graph-holder">
