@@ -160,6 +160,7 @@ function init_github_graph($) {
 
             //Fixed size for now with width= 721 and height = 110
             var wire_html = `
+            <div id="contribution-graph">
                 ${
                     settings.viewHeader
                         ? `
@@ -175,10 +176,9 @@ function init_github_graph($) {
                 }
                 
                 <div id="graph-border">
-                    
                     <div id="graph-holder">
                         <svg width="755px" height="128px" class="js-calendar-graph-svg">
-                            <g transform="translate(26, 26)">
+                            <g transform="translate(15, 25)">
                                 ${loop_html}
                             </g>
                         </svg>
@@ -200,6 +200,7 @@ function init_github_graph($) {
                         More
                     </div>
                 </div>
+            </div id="contribution-graph">
             `;
 
             wrap_chart.html(wire_html);

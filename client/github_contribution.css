@@ -1,9 +1,8 @@
 /* Author: bachvtuan@gmail.com */
 /* Modified By Aerocode. */
 
-@media only screen and (max-width: 768px) {
-    #graph-border,
-    #graph-header {
+@media only screen and (max-width: 900px) {
+    #contribution-graph {
         display: none;
     }
 }
@@ -41,6 +40,11 @@
     font-size: 11px;
 }
 
+#contribution-graph {
+    width: fit-content;
+    margin: 15px auto 0;
+}
+
 #graph-header {
     margin-left: 10px;
     margin-bottom: 10px;
@@ -50,7 +54,7 @@
 #graph-border {
     border: 1px solid #e1e4e8 !important;
     width: inherit;
-    max-width: 768px;
+    max-width: 863px;
     border-radius: 4px;
 }
 
@@ -60,6 +64,7 @@
     align-items: flex-end !important;
     flex-direction: column !important;
     margin: 5px 10px;
+    max-width: 860px;
 }
 
 .contrib-footer {
