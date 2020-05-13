@@ -1,4 +1,5 @@
 // Author: bachvtuan@gmail.com
+// Modified By Aerocode.
 
 //Format string
 if (!String.prototype.formatString) {
@@ -83,7 +84,7 @@ if (!String.prototype.formatString) {
             var loop_html = "";
 
             //One year has 52 weeks
-            var step = 13;
+            var step = 14;
 
             var month_position = [];
             var current_date = new Date();
@@ -116,16 +117,7 @@ if (!String.prototype.formatString) {
                     var count = getCount(data_date);
                     var color = getColor(count);
 
-                    item_html +=
-                        '<rect class="day" width="11" height="11" y="' +
-                        y +
-                        '" fill="' +
-                        color +
-                        '" data-count="' +
-                        count +
-                        '" data-date="' +
-                        data_date +
-                        '"/>';
+                    item_html += `<rect class="day" width="${12}" height="${12}" y="${y}" fill="${color}" data-count="${count}" data-date="${data_date}" /> `;
                 }
 
                 item_html += "</g>";
@@ -152,23 +144,57 @@ if (!String.prototype.formatString) {
 
             //Add Monday, Wenesday, Friday label
             loop_html +=
-                '<text text-anchor="middle" class="wday" dx="-10" dy="22">{0}</text>'.formatString(
+                '<text text-anchor="middle" class="wday" dx="-10" dy="24">{0}</text>'.formatString(
                     settings.h_days[0]
                 ) +
-                '<text text-anchor="middle" class="wday" dx="-10" dy="48">{0}</text>'.formatString(
+                '<text text-anchor="middle" class="wday" dx="-10" dy="53">{0}</text>'.formatString(
                     settings.h_days[1]
                 ) +
-                '<text text-anchor="middle" class="wday" dx="-10" dy="74">{0}</text>'.formatString(
+                '<text text-anchor="middle" class="wday" dx="-10" dy="80">{0}</text>'.formatString(
                     settings.h_days[2]
                 );
 
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
             //Fixed size for now with width= 721 and height = 110
-            var wire_html =
-                '<svg width="721" height="110" class="js-calendar-graph-svg">' +
-                '<g transform="translate(20, 20)">' +
-                loop_html +
-                "</g>" +
-                "</svg>";
+            const cx = 0;
+            var wire_html = `
+                <div id="graph-header">
+                    ${numberWithCommas(
+                        cx
+                        // settings.data.length
+                    )} 
+                    ${cx <= 1 ? "post" : "posts"} in the last year
+                </div>
+                <div id="graph-border">
+                    
+                    <div id="graph-holder">
+                        <svg width="755px" height="128px" class="js-calendar-graph-svg">
+                            <g transform="translate(26, 26)">
+                                ${loop_html}
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="contrib-footer clearfix mt-1 mx-3 px-3 pb-1">
+                        <div class="footer-how-count">
+                            <a href="https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile" target="_blank" class="">
+                                Learn how we count contributions</a>.
+                            </div>
+                        <div class="contrib-legend text-gray" title="블로그에 작성한 게시글 개수를 의미합니다.">
+                        Less
+                        <ul class="legend">
+                            <li style="background-color: #ebedf0"></li>
+                            <li style="background-color: #c6e48b"></li>
+                            <li style="background-color: #7bc96f"></li>
+                            <li style="background-color: #239a3b"></li>
+                            <li style="background-color: #196127"></li>
+                        </ul>
+                        More
+                    </div>
+                </div>
+            `;
 
             wrap_chart.html(wire_html);
 
@@ -218,6 +244,7 @@ if (!String.prototype.formatString) {
             {
                 //Default init settings.colors, user can override
                 colors: ["#eeeeee", "#d6e685", "#8cc665", "#44a340", "#44a340"],
+
                 //List of name months
                 month_names: [
                     "Jan",
@@ -234,6 +261,7 @@ if (!String.prototype.formatString) {
                     "Dec",
                 ],
                 h_days: ["M", "W", "F"],
+
                 //Default is empty, it can be overrided
                 data: [],
             },

@@ -1,32 +1,103 @@
+/* Author: bachvtuan@gmail.com */
+/* Modified By Aerocode. */
+
+@media only screen and (max-width: 768px) {
+    #graph-border {
+        display: none;
+    }
+}
+
 .svg-tip {
-  padding: 10px;
-  background: rgba(0,0,0,0.8);
-  color: #bbb;
-  font-size: 12px;
-  position: absolute;
-  z-index: 99999;
-  text-align: center;
-  border-radius: 3px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #bbb;
+    font-size: 12px;
+    position: absolute;
+    z-index: 99999;
+    text-align: center;
+    border-radius: 3px;
 }
 
 .svg-tip:after {
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  position: absolute;
-  left: 50%;
-  height: 5px;
-  width: 5px;
-  bottom: -10px;
-  margin: 0 0 0 -5px;
-  content: " ";
-  border: 5px solid transparent;
-  border-top-color: rgba(0,0,0,0.8);
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    left: 50%;
+    height: 5px;
+    width: 5px;
+    bottom: -10px;
+    margin: 0 0 0 -5px;
+    content: " ";
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
 }
 
 .month {
-  font-size: 12px;
+    font-size: 12px;
 }
 
 .wday {
-  font-size: 11px;
+    font-size: 11px;
+}
+
+#graph-header {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    font-weight: 400 !important;
+}
+
+#graph-border {
+    border: 1px solid #e1e4e8 !important;
+    width: inherit;
+    max-width: 768px;
+    border-radius: 4px;
+}
+
+#graph-holder {
+    overflow: hidden;
+    display: flex !important;
+    align-items: flex-end !important;
+    flex-direction: column !important;
+    margin: 5px 10px;
+}
+
+.contrib-footer {
+    padding: 0px 15px 25px;
+    font-size: 12px;
+}
+
+.footer-how-count {
+    float: left;
+}
+
+.footer-how-count a {
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.contrib-legend {
+    float: right;
+}
+
+.contrib-legend ol,
+ul {
+    padding-left: 0;
+}
+
+.contrib-legend .legend {
+    position: relative;
+    bottom: -1px;
+    display: inline-block;
+    margin: 0 5px;
+    list-style: none;
+}
+
+.contrib-legend .legend li {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+}
+
+.text-gray {
+    color: #586069 !important;
 }
