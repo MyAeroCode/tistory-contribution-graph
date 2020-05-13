@@ -1,7 +1,7 @@
 /* Author: bachvtuan@gmail.com */
 /* Modified By Aerocode. */
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 960px) {
     #contribution-graph {
         display: none;
     }
@@ -42,7 +42,7 @@
 
 #contribution-graph {
     width: fit-content;
-    margin: 15px auto 0;
+    margin: 25px auto 0;
 }
 
 #graph-header {
@@ -53,8 +53,7 @@
 
 #graph-border {
     border: 1px solid #e1e4e8 !important;
-    width: inherit;
-    max-width: 863px;
+    width: 960px;
     border-radius: 4px;
 }
 
@@ -68,7 +67,7 @@
 }
 
 .contrib-footer {
-    padding: 0px 15px 25px;
+    padding: 10px 15px 25px;
     font-size: 12px;
 }
 
