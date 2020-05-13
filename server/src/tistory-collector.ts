@@ -92,6 +92,7 @@ export class TistoryCollector {
                 "YYYY-MM-DD HH:mm:ss"
             )})`,
             content: `<div id="${this.logDivId}">${serializedLog}</div>`,
+            visibility: 3,
         });
         console.log("데이터 저장 완료");
     }
@@ -221,6 +222,7 @@ export class TistoryCollector {
                 "YYYY-MM-DD HH:mm:ss"
             )})`,
             content: "",
+            visibility: 3,
         });
         console.log("데이터 초기화 완료");
     }
