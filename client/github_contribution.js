@@ -11,7 +11,7 @@ if (!String.prototype.formatString) {
     };
 }
 
-(function ($) {
+function init_github_graph($) {
     $.fn.github_graph = function (options) {
         //If the number less than 10, add Zero before it
         var prettyNumber = function (number) {
@@ -278,4 +278,4 @@ if (!String.prototype.formatString) {
 
         start();
     };
-})(jQuery);
+}

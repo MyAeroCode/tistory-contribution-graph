@@ -23,8 +23,11 @@ async function loadTistoryContributionGraph(
     storagePostId,
     viewHeader = true
 ) {
-    let github_graph_data;
+    //
+    // github_graph 함수를 jQuery에 삽입한다.
+    init_github_graph(jQuery);
 
+    let github_graph_data;
     try {
         //
         // 스토리지 게시글의 URL을 조합하고,
