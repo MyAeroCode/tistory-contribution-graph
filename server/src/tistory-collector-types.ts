@@ -28,6 +28,12 @@ export type CollectInput = {
      * 숫자 형태입니다.
      */
     storagePostId: string;
+
+    /**
+     * 두 번째 수집부터 최근 {N}개월의 이력을 조사하도록 합니다. (기본값 1)
+     * 첫 번째 수집에는 강제로 12로 설정됩니다.
+     */
+    updateRange?: number;
 };
 
 /**

@@ -53,13 +53,10 @@ export class TistoryCollector {
     }
 
     /**
-     * 1년전 날짜를 "YYYY-MM-DD" 형태로 가져온다.
+     * N개월 전 날짜를 "YYYY-MM-DD" 형태로 가져온다.
      */
-    private getDateOneYearBefore(): string {
-        return moment()
-            .subtract(1, "year")
-            .subtract(1, "day")
-            .format("YYYY-MM-DD");
+    private getNthMonthBefore(month: number): string {
+        return moment().subtract(month, "month").format("YYYY-MM-DD");
     }
 
     /**
@@ -131,8 +128,9 @@ export class TistoryCollector {
         }
 
         //
-        // 1년전 날짜
-        const beforeOneYear = this.getDateOneYearBefore();
+        // 1년이 지나버린 이력을 지우기 위해,
+        // 1년전 날짜를 가져온다.
+        const beforeOneYear = this.getNthMonthBefore(12);
 
         //
         // 문자열 형태로 직렬화된 이력
@@ -192,6 +190,29 @@ export class TistoryCollector {
     }
 
     /**
+     * 어떤 이력에서 최근 N개월이 제거된 이력을 반환한다.
+     */
+    private cutNthMonth(log: PostLog, month: number): PostLog {
+        //
+        // N개월 전의 날짜를 가져온다.
+        const beforeNthMonth = this.getNthMonthBefore(month);
+
+        //
+        // 이력에 저장된 날짜들을 가져오고,
+        // N개월 이전보다 크다면 이력에서 삭제한다.
+        const dates = Array.from(log.keys());
+        for (const date of dates) {
+            if (beforeNthMonth <= date) {
+                log.delete(date);
+            }
+        }
+
+        //
+        // 결과를 반환한다.
+        return log;
+    }
+
+    /**
      * 타겟 스토리지의 내용을 제거한다.
      */
     public async clear(arg: ClearInput): Promise<void> {
@@ -205,7 +226,7 @@ export class TistoryCollector {
         try {
             console.log("정말 스토리지 데이터인지 확인합니다.");
             await this.load(arg);
-            console.log("스토리지 검증 완료");
+            console.log("데이터 검증 완료");
         } catch (e) {
             throw new Error(
                 `스토리지 게시글이 아닌 것 같습니다. 수동으로 삭제해주세요. [${e.message}]`
@@ -228,27 +249,6 @@ export class TistoryCollector {
     }
 
     /**
-     * 주어진 이력에서 가장 마지막 날짜를 가져옵니다.
-     * 빈 이력이 주어진다면 "0000-00-00"을 반환합니다.
-     */
-    private getLastDateOfPostLog(log: PostLog): string {
-        //
-        // 빈 이력이 주어졌을 때.
-        if (log.size === 0) {
-            return "0000-00-00";
-        } else {
-            const lastDate = Array.from(log.keys()).reduce(function comparator(
-                prev,
-                curr
-            ) {
-                return prev < curr ? curr : prev;
-            });
-            console.log("마지막 이력 날짜", lastDate);
-            return lastDate;
-        }
-    }
-
-    /**
      * 어떤 블로그의 전체 포스팅 이력을 가져옵니다.
      * {k:날짜, v:개수}로 이루어진 Map을 반환합니다.
      */
@@ -260,25 +260,32 @@ export class TistoryCollector {
         const access_token = await this.api.getAccessTokenViaCode(code);
 
         /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            스토리지 게시글에서 기존이력 정보와,
-            기존이력에 저장된 가장 마지막 날짜를 가져온다.
+            스토리지 게시글에서 기존이력 정보에서 최근 N개월의 이력을 제거한다.
+            다음 단계에서 N개월의 이력이 재수집될 것이다.
 
-            가장 마지막 날짜에 블로거가 게시글을 더 작성했을 수 있으므로,
-            기존이력에서 마지막 날짜의 카운트를 제거한다.
+            첫 수집이라면 N=12가 되도록 강제해야 한다.
         ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
-        const postLog: PostLog = await this.load({
+        const rawPostLog: PostLog = await this.load({
             storageBlogName: arg.storageBlogName || arg.targetBlogName,
             storagePostId: arg.storagePostId,
         });
-        const lastLoggedDate = this.getLastDateOfPostLog(postLog);
-        postLog.delete(lastLoggedDate);
+        const updateRange = rawPostLog.size
+            ? Math.max(Math.min(arg.updateRange || 1, 12), 1)
+            : 12;
+        const postLog: PostLog = this.cutNthMonth(rawPostLog, updateRange);
+
+        //
+        // 업데이트 구간 관련 안내.
+        console.log("요청된 업데이트 구간 : ", arg.updateRange || "없음");
+        console.log("적용된 업데이트 구간 : ", updateRange);
 
         /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            최근 페이지부터 순회하며,
-            기존이력에 저장된 마지막 날짜보다 작아지거나,
-            1년 이전에 작성된 게시글을 발견할때 까지 카운팅을 수행한다.
+            최근 페이지부터 시작해서 updateCriteriaDate보다 큰 이력들을 삽입한다. 
+            작아졌다면 중단한다.
         ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
-        const beforeOneYear = this.getDateOneYearBefore();
+        const updateCriteriaDate = this.getNthMonthBefore(updateRange);
+        console.log("현재 날짜 : ", moment().format("YYYY-MM-DD"));
+        console.log("타겟 날짜 : ", updateCriteriaDate);
 
         let keepLoop: boolean = true;
         for (let page = 1; keepLoop; page++) {
@@ -292,21 +299,21 @@ export class TistoryCollector {
             });
 
             //
-            // 진행상황을 출력
+            // 진행상황을 출력한다.
             const lastPage = Math.round(Number(apiOut.item.totalCount) / 10);
             console.log("page", page, "/", lastPage);
-            const { posts } = apiOut.item;
 
             //
             // 작성날짜마다 카운트를 증가시킨다.
             // 단, 기존이력의 마지막 날짜보다 작아지거나,
             // 그래프에 표시되지 않는 1년 이전의 포스트를 발견했다면 중단한다.
+            const { posts } = apiOut.item;
             for (const post of posts) {
                 /**
                  * "YYYY-MM-DD" 형태의 날짜 문자열
                  */
                 const date = post.date.substr(0, 10);
-                if (date < lastLoggedDate || date < beforeOneYear) {
+                if (date < updateCriteriaDate) {
                     console.log("stop at", date);
                     keepLoop = false;
                     break;
@@ -315,14 +322,15 @@ export class TistoryCollector {
             }
 
             //
-            // 마지막 페이지라면 탐색을 그만둔다.
+            // 마지막 페이지라면 탐색을 그만두고,
+            // 아니라면 다음 API 콜과의 텀을 두기위해 잠깐 대기한다.
             if (page === lastPage) {
                 keepLoop = false;
+            } else {
+                //
+                // 잠깐 대기한다.
+                await new Promise((resolve) => setTimeout(resolve, 100));
             }
-
-            //
-            // 잠깐 대기한다.
-            await new Promise((resolve) => setTimeout(resolve, 100));
         }
         console.log("데이터 갱신 완료");
 
