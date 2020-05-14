@@ -185,7 +185,7 @@ function init_github_graph($) {
                     </div>
                     <div class="contrib-footer clearfix mt-1 mx-3 px-3 pb-1">
                         <div class="footer-how-count">
-                            <a href="https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile" target="_blank" class="">
+                            <a href="https://aerocode.net/353" target="_blank" class="">
                                 Learn how we count contributions</a>.
                             </div>
                         <div class="contrib-legend text-gray" title="블로그에 작성한 게시글 개수를 의미합니다.">
