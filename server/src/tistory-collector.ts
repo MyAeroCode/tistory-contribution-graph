@@ -1,4 +1,9 @@
-import { TistoryApi, TistoryKey, TistoryAccountInfo } from "tistory-js/v1";
+import {
+    TistoryApi,
+    TistoryKey,
+    TistoryAccountInfo,
+    ListPostEachItem,
+} from "tistory-js/v1";
 import {
     CollectInput,
     PostLog,
@@ -60,6 +65,36 @@ export class TistoryCollector {
     }
 
     /**
+     * 게시글이 수집에 포함되어야 하는지 검사한다.
+     */
+    private isInclude(post: ListPostEachItem, includeMask: string): boolean {
+        let idx = 0;
+
+        //
+        // 마스크의 길이가 올바른지 검사한다.
+        if (includeMask.length !== 3) {
+            throw new Error(
+                `excludeMask의 길이가 3이 아닙니다 : ${includeMask}`
+            );
+        }
+
+        //
+        // 비공개
+        if (post.visibility === "0") idx = 0;
+        //
+        // 보호됨
+        if (post.visibility === "15") idx = 1;
+        //
+        // 발행됨
+        if (post.visibility === "20") idx = 2;
+
+        //
+        // 마스크에서 1로 설정되어 있어야만,
+        // 수집결과에 포함될 수 있다.
+        return includeMask[idx] === "1";
+    }
+
+    /**
      * 포스팅 이력을 게시글에 저장합니다.
      */
     private async save(arg: SaveInput): Promise<void> {
@@ -113,7 +148,10 @@ export class TistoryCollector {
 
         //
         // 빈 게시글이면, 빈 이력을 반환한다.
-        if (apiOut.item.content === "") {
+        if (
+            apiOut.item.content === "" ||
+            apiOut.item.content === `<div id="${this.logDivId}"></div>`
+        ) {
             return new Map();
         }
 
@@ -242,7 +280,7 @@ export class TistoryCollector {
             title: `게시글 이력 (Updated At ${moment().format(
                 "YYYY-MM-DD HH:mm:ss"
             )})`,
-            content: "",
+            content: `<div id="${this.logDivId}"></div>`,
             visibility: 3,
         });
         console.log("데이터 초기화 완료");
@@ -253,9 +291,23 @@ export class TistoryCollector {
      * {k:날짜, v:개수}로 이루어진 Map을 반환합니다.
      */
     public async collect(arg: CollectInput): Promise<PostLog> {
-        /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            액세스 토큰을 취득한다.
-        ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+        //
+        // 인자 유효성 검사 : includeMask
+        //
+        // 기본 마스크 세팅
+        //      비공개 : 제외 (좌측 비트)
+        //      보호됨 : 제외 (중앙 비트)
+        //      공개됨 : 포함 (우측 비트)
+        const includeMask: string = process.env["includeMask"] || "001";
+        if (!/^[01]{3}$/.test(includeMask)) {
+            throw new Error(
+                `includeMask는 0과 1로 이루어진 3글자 문자열이어야 합니다 : ${includeMask}`
+            );
+        }
+        console.log("사용된 포함 마스크 : ", includeMask);
+
+        //
+        // 액세스 토큰을 취득한다.
         const code = await this.api.getCodeViaAccountInfo(this.account);
         const access_token = await this.api.getAccessTokenViaCode(code);
 
@@ -318,7 +370,12 @@ export class TistoryCollector {
                     keepLoop = false;
                     break;
                 }
-                postLog.set(date, (postLog.get(date) || 0) + 1);
+
+                //
+                // 수집기 대상에 포함된 게시글만 카운팅한다.
+                if (this.isInclude(post, includeMask)) {
+                    postLog.set(date, (postLog.get(date) || 0) + 1);
+                }
             }
 
             //
