@@ -1,0 +1,8 @@
+# 의존성 모듈 파일
+**/node_modules
+
+# 로그 파일
+**/npm-debug.log
+
+# 환경변수 설정파일
+**/.env
