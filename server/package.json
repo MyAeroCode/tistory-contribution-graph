@@ -34,7 +34,7 @@
         "prompts": "^2.3.2",
         "qs": "^6.9.4",
         "serverless-dotenv-plugin": "^2.4.2",
-        "tistory-js": "^1.14.10",
+        "tistory-js": "^1.14.11",
         "yargs": "^15.3.1"
     }
 }
