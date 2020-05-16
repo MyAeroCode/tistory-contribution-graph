@@ -7,8 +7,14 @@ elif [ "$1" = "deploy" ] || [ "$1" = "remove" ]; then
     npm install
 
     # dotenv 생성
-    if [ $storageBlogId ]; then 
-        echo "storageBlogId=$storageBlogId" >> ".env" 
+    if [ $targetBlogName ]; then 
+        echo "targetBlogName=$targetBlogName" >> ".env" 
+    fi
+    if [ $storageBlogName ]; then 
+        echo "storageBlogName=$storageBlogName" >> ".env" 
+    fi
+    if [ $storagePostId ]; then 
+        echo "storagePostId=$storagePostId" >> ".env" 
     fi
     if [ $client ]; then 
         echo "client=$client" >> ".env" 
