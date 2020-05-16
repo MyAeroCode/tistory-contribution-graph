@@ -1,8 +1,13 @@
 // Author: bachvtuan@gmail.com
-// Modified By Aerocode.
+// Modified, Refactored By Aerocode.
 
-//Format string
 if (!String.prototype.formatString) {
+    /**
+     * {0}-{1}-{2}... 형태의 문자열에 인자를 하나씩 삽입한다.
+     *
+     * @example)
+     *      "{0}-{1}-{2}".formatString('a', 'b', 'c') => "a-b-c"
+     */
     String.prototype.formatString = function () {
         var args = arguments;
         return this.replace(/{(\d+)}/g, function (match, number) {
@@ -13,72 +18,81 @@ if (!String.prototype.formatString) {
 
 function init_github_graph($) {
     $.fn.github_graph = function (options) {
-        //If the number less than 10, add Zero before it
-        var prettyNumber = function (number) {
+        /**
+         * 카운팅 결과 { [formatedDate :string] :number }
+         */
+        const countings = {};
+
+        /**
+         * 숫자가 10 이하라면 앞에 0을 붙인다.
+         *
+         * @param {number} number
+         */
+        function prettyNumber(number) {
             return number < 10
                 ? "0" + number.toString()
                 : (number = number.toString());
-        };
+        }
 
-        /*
-        Count the number on each day and store the object
-        */
-        var processListTimeStamp = function (list_timestamp) {
-            //The result will store into this varriable
-            obj_timestamp = {};
-            for (var i = 0; i < list_timestamp.length; i++) {
-                var _d = new Date(list_timestamp[i]);
-                var display_date = getDisplayDate(_d);
-                if (!obj_timestamp[display_date]) {
-                    obj_timestamp[display_date] = 1;
-                } else {
-                    obj_timestamp[display_date]++;
-                }
+        /**
+         * 주어진 타임스탬프 배열에서 각 날짜를 카운팅하고,
+         * 그 결과를 배열에 담아 반환한다.
+         */
+        function processListTimeStamp(formatedDateList) {
+            for (const formatedDate of formatedDateList) {
+                countings[formatedDate] = (countings[formatedDate] || 0) + 1;
             }
-        };
+        }
 
-        var getDisplayDate = function (date_obj) {
-            var pretty_month = prettyNumber(date_obj.getMonth() + 1);
-            var pretty_date = prettyNumber(date_obj.getDate());
-            return "{0}-{1}-{2}".formatString(
-                date_obj.getFullYear(),
-                pretty_month,
-                pretty_date
-            );
-        };
+        /**
+         * 날짜에서 "yyyy-mm-dd" 형태로 포맷된 문자열을 얻는다.
+         *
+         * @param {Date} date 날짜 객체
+         */
+        function getFormatedDate(date) {
+            const yyyy = date.getFullYear();
+            const mm = prettyNumber(date.getMonth() + 1);
+            const dd = prettyNumber(date.getDate());
+            return "{0}-{1}-{2}".formatString(yyyy, mm, dd);
+        }
 
-        var getCount = function (display_date) {
-            if (obj_timestamp[display_date]) {
-                return obj_timestamp[display_date];
-            }
-            return 0;
-        };
+        /**
+         * 해당 날짜의 카운트를 가져온다.
+         *
+         * @param {string} formatedDate "yyyy-mm-dd" 형태로 포맷된 날짜 문자열
+         */
+        function getCount(formatedDate) {
+            return countings[formatedDate] || 0;
+        }
 
-        var getColor = function (count) {
-            if (count >= settings.colors.length) {
-                return settings.colors[settings.colors.length - 1];
-            }
-            return settings.colors[count];
-        };
+        /**
+         * 어떤 카운트에 맞는 색상을 가져온다.
+         */
+        function getColor(count) {
+            return settings.colors[Math.min(count, settings.colors.length - 1)];
+        }
 
-        var start = function () {
+        function start() {
             processListTimeStamp(settings.data);
             var wrap_chart = _this;
 
             settings.colors_length = settings.colors.length;
 
-            var start_date = new Date();
-            start_date.setMonth(start_date.getMonth() - 12);
-
-            for (var i = 0; i < 7; i++) {
-                var day = start_date.getDay();
-                if (day == 0) {
-                    //sunday
-                    break;
-                } else {
-                    //Loop until get Sunday
-                    start_date.setDate(start_date.getDate() + 1);
-                }
+            //
+            // 윤년을 고려하여 시작점을 구한다.
+            // 시작점은 반드시 자정을 가르켜야 하고,
+            // 1년을 뺀 뒤에 52주 이내의 첫 번째 월요일이 나올때까지 하루씩 더한다.
+            const now = new Date();
+            const srtDate = new Date(now);
+            srtDate.setHours(0, 0, 0, 0);
+            srtDate.setMonth(srtDate.getMonth() - 12);
+            while (true) {
+                const msPer52Week = 31449600000;
+                const interval = now - srtDate;
+                const isIn52Weeks = interval <= msPer52Week;
+                const isMonday = srtDate.getDay() === 0;
+                if (isMonday && isIn52Weeks) break;
+                srtDate.setDate(srtDate.getDate() + 1);
             }
 
             var loop_html = "";
@@ -88,22 +102,22 @@ function init_github_graph($) {
 
             var month_position = [];
             var current_date = new Date();
-            month_position.push({ month_index: start_date.getMonth(), x: 0 });
-            var using_month = start_date.getMonth();
+            month_position.push({ month_index: srtDate.getMonth(), x: 0 });
+            var using_month = srtDate.getMonth();
             for (var i = 0; i < 52; i++) {
                 var g_x = i * step;
                 var item_html =
                     '<g transform="translate(' + g_x.toString() + ',0)">';
 
                 for (var j = 0; j < 7; j++) {
-                    if (start_date > current_date) {
+                    if (srtDate > current_date) {
                         //Break the loop
                         break;
                     }
                     var y = j * step;
 
-                    var month_in_day = start_date.getMonth();
-                    var data_date = getDisplayDate(start_date);
+                    var month_in_day = srtDate.getMonth();
+                    var data_date = getFormatedDate(srtDate);
                     //Check first day in week
                     if (j == 0 && month_in_day != using_month) {
                         using_month = month_in_day;
@@ -113,7 +127,7 @@ function init_github_graph($) {
                         });
                     }
                     //move on to next day
-                    start_date.setDate(start_date.getDate() + 1);
+                    srtDate.setDate(srtDate.getDate() + 1);
                     var count = getCount(data_date);
                     var color = getColor(count);
 
@@ -214,7 +228,7 @@ function init_github_graph($) {
             _this.find("rect").on("mouseenter", mouseEnter);
             _this.find("rect").on("mouseleave", mouseLeave);
             appendTooltip();
-        };
+        }
 
         var mouseLeave = function (evt) {
             $(".svg-tip").hide();
