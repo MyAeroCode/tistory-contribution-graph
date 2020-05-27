@@ -81,7 +81,7 @@ function init_github_graph($) {
             //
             // 윤년을 고려하여 시작점을 구한다.
             // 시작점은 반드시 자정을 가르켜야 하고,
-            // 1년을 뺀 뒤에 52주 이내의 첫 번째 월요일이 나올때까지 하루씩 더한다.
+            // 1년을 뺀 뒤에 52주 이내의 첫 번째 일요일이 나올때까지 하루씩 더한다.
             const now = new Date();
             const srtDate = new Date(now);
             srtDate.setHours(0, 0, 0, 0);
@@ -90,8 +90,8 @@ function init_github_graph($) {
                 const msPer52Week = 31449600000;
                 const interval = now - srtDate;
                 const isIn52Weeks = interval <= msPer52Week;
-                const isMonday = srtDate.getDay() === 0;
-                if (isMonday && isIn52Weeks) break;
+                const isSunday = srtDate.getDay() === 0;
+                if (isSunday && isIn52Weeks) break;
                 srtDate.setDate(srtDate.getDate() + 1);
             }
 
