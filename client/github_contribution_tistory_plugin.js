@@ -24,8 +24,9 @@ async function loadTistoryContributionGraph(
     viewHeader = true
 ) {
     //
-    // github_graph 함수를 jQuery에 삽입한다.
-    init_github_graph(jQuery);
+    // github_graph 함수를 jQuery 또는 $에 삽입한다.
+    jQuery && init_github_graph(jQuery);
+    $ && init_github_graph($);
 
     let github_graph_data;
     try {
