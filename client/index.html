@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+    <!-- 티스토리 포스터 스킨 기준 예시입니다. -->
+    <!-- 다른 스킨에서 적용시 디자인이 깨질 수 있으며, 이에 관련한 문의는 받지 않습니다. -->
+
     <head>
         <!-- 티스토리 컨트리뷰션 라이브러리 시작 -->
         <script
@@ -7,20 +10,28 @@
             integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
             crossorigin="anonymous"
         ></script>
-        <script src="github_contribution.js"></script>
-        <script src="github_contribution_tistory_plugin.js"></script>
-        <link href="github_contribution.css" rel="stylesheet" />
+        <script src="./images/github_contribution.js"></script>
+        <script src="./images/github_contribution_tistory_plugin.js"></script>
+        <link href="./images/github_contribution.css" rel="stylesheet" />
         <!-- 티스토리 컨트리뷰션 라이브러리 종료 -->
     </head>
-    <body>
-        <!-- 티스토리 컨트리뷰션이 그려질 홀더 시작 -->
-        <div id="your_graph"></div>
-        <!-- 티스토리 컨트리뷰션이 그려질 홀더 종료 -->
 
-        <script>
-            //
-            // 티스토리 컨트리뷰션 그래프를 렌더링한다.
-            loadTistoryContributionGraph("#your_graph", 19);
-        </script>
+    <body>
+        <!-- cover-list를 찾아 아래와 같이 코드를 추가해주세요. -->
+        <s_cover name="cover-list">
+            <!-- 티스토리 컨트리뷰션이 그려질 홀더 시작 -->
+            <div id="your_graph"></div>
+            <script>
+                //
+                // 티스토리 컨트리뷰션 그래프를 렌더링한다.
+                // 첫 번째 인자는 홀더 아이디.
+                // 두 번째 인자는 스토리지 게시글 번호.
+                loadTistoryContributionGraph("#your_graph", 352);
+            </script>
+            <!-- 티스토리 컨트리뷰션이 그려질 홀더 종료 -->
+
+            <!-- 기존 코드를 삭제하지 말아주세요. -->
+            ...
+        </s_cover>
     </body>
 </html>
