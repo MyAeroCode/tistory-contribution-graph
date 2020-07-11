@@ -24,10 +24,34 @@ async function loadTistoryContributionGraph(
     viewHeader = true
 ) {
     //
-    // github_graph 함수를 jQuery 또는 $에 삽입한다.
-    jQuery && init_github_graph(jQuery);
-    $ && init_github_graph($);
+    // 최상단 변수의 스코프를 끌어내린다.
+    var $;
+    var jQuery;
 
+    //
+    // jQuery에 github_graph 함수를 삽입한 뒤, jq 변수에 할당한다.
+    let jq = undefined;
+    const jqCandidateList = [$, jQuery];
+    for (const jqCandidate of jqCandidateList) {
+        if (jqCandidate && jqCandidate.fn && !jq) {
+            try {
+                init_github_graph(jqCandidate);
+                jq = jqCandidate;
+            } catch (e) {
+                //
+                // nothing.
+            }
+        }
+    }
+
+    //
+    // jQuery를 찾았는지 검사한다.
+    if (!jq) {
+        throw new Error(`jQuery를 감지할 수 없습니다.`);
+    }
+
+    //
+    // 컨트리뷰션 그래프를 렌더링한다.
     let github_graph_data;
     try {
         //
@@ -79,11 +103,11 @@ async function loadTistoryContributionGraph(
         //
         // 에러 발생.
         github_graph_data = [];
-        console.warn(e);
+        console.warn(`데이터 불러오기 실패 : `, e);
     } finally {
         //
         // 파싱결과를 사용하여 컨트리뷰션 그래프를 렌더링한다.
-        $(graphId).github_graph({
+        jq(graphId).github_graph({
             data: github_graph_data,
             texts: ["개의 포스트", "개의 포스트"],
             h_days: ["월", "수", "금"],
